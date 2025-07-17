@@ -1,13 +1,50 @@
-
 <!DOCTYPE html>
 <html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>iDevice Bensheim Preisliste</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iDevice Bensheim Preisliste</title>
+</head>
+<body>
+  <h1>📱 Прайс-лист – iDevice Bensheim</h1>
+  <input type="text" id="search" placeholder="Поиск модели или ремонта..." oninput="filterTable()" style="padding: 8px; width: 100%; max-width: 400px; margin-bottom: 10px;" />
+  <table id="priceTable" border="1" cellpadding="10" cellspacing="0" style="width:100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th>Бренд</th>
+        <th>Модель</th>
+        <th>Ремонт</th>
+        <th>Цена</th>
+      </tr>
+    </thead>
+    <tbody id="priceBody"></tbody>
+  </table>
+
+  <script>
+    fetch('preisliste_full.json')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.getElementById('priceBody');
+        data.forEach(item => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${item.marke}</td>
+            <td>${item.modell}</td>
+            <td>${item.dienst}</td>
+            <td>${item.preis}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      });
+
+    function filterTable() {
+      const query = document.getElementById("search").value.toLowerCase();
+      const rows = document.querySelectorAll("#priceTable tbody tr");
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(query) ? "" : "none";
+      });
+    }
+  </script>
+</body>
 </html>
