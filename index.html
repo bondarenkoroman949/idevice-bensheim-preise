@@ -20,31 +20,43 @@
     <tbody id="priceBody"></tbody>
   </table>
 
-  <script>
-    fetch('src/preisliste_full.json')
-      .then(res => res.json())
-      .then(data => {
-        const tbody = document.getElementById('priceBody');
-        data.forEach(item => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${item.marke}</td>
-            <td>${item.modell}</td>
-            <td>${item.dienst}</td>
-            <td>${item.preis}</td>
-          `;
-          tbody.appendChild(row);
-        });
-      });
+ <script>
+  let fullData = [];
 
-    function filterTable() {
+  fetch('preisliste_full.json')
+    .then(res => res.json())
+    .then(data => {
+      fullData = data;
+      renderTable(data);
+    });
+
+  function renderTable(data) {
+    const tbody = document.getElementById('priceBody');
+    tbody.innerHTML = ''; // очищаем
+    data.forEach(item => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${item.marke}</td>
+        <td>${item.modell}</td>
+        <td>${item.dienst}</td>
+        <td>${item.preis}</td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  let debounceTimer;
+  document.getElementById("search").addEventListener("input", () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
       const query = document.getElementById("search").value.toLowerCase();
-      const rows = document.querySelectorAll("#priceTable tbody tr");
-      rows.forEach(row => {
-        const text = row.innerText.toLowerCase();
-        row.style.display = text.includes(query) ? "" : "none";
-      });
-    }
-  </script>
+      const filtered = fullData.filter(item =>
+        (item.marke + item.modell + item.dienst + item.preis).toLowerCase().includes(query)
+      );
+      renderTable(filtered);
+    }, 300); // 300 мс задержка
+  });
+</script>
+
 </body>
 </html>
