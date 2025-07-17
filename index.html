@@ -21,7 +21,7 @@
   </table>
 
   <script>
-    fetch('preisliste_full.json')
+    fetch('src/preisliste_full.json')
       .then(res => res.json())
       .then(data => {
         const tbody = document.getElementById('priceBody');
